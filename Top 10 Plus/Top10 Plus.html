@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>London Top 10</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .frame-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* 4:3 aspect ratio, can be adjusted as needed */
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            overflow: hidden;
+        }
+        
+        /* Use viewport height on larger screens */
+        @media (min-width: 768px) and (min-height: 600px) {
+            .frame-container {
+                height: 100vh;
+                padding-bottom: 0;
+            }
+        }
+        
+        /* Scale down content on smaller screens */
+        @media (max-width: 480px), (max-height: 480px) {
+            .frame-container {
+                padding-bottom: 100%; /* Use square ratio on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="frame-container" id="intro-container">
+            <iframe class="frame" id="intro-frame" src="Top 10 Intro/Top10 Intro.html" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-top-navigation"></iframe>
+        </div>
+        <div class="frame-container" id="top10-container">
+            <iframe class="frame" id="top10-frame" src="Top 10/Top10.html" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-top-navigation"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Wait for page to load completely
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get iframe element
+            const introFrame = document.getElementById('intro-frame');
+            
+            // Set up message listener after iframe loads
+            introFrame.onload = function() {
+                // Listen for messages from iframe
+                window.addEventListener('message', function(event) {
+                    // Check if message is about Explore button click
+                    if (event.data === 'exploreClicked') {
+                        // Scroll to Top 10 page
+                        document.getElementById('top10-container').scrollIntoView({ 
+                            behavior: 'smooth' 
+                        });
+                    }
+                });
+                
+                // Send message to iframe, telling it we're ready to receive messages
+                introFrame.contentWindow.postMessage('ready', '*');
+            };
+        });
+    </script>
+</body>
+</html> 

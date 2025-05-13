@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Visitors Data</title>
+    <link rel="stylesheet" href="./travel data.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="scroll-container">
+        <section id="intro" class="section">
+            <div class="intro-text-container">
+                <div class="intro-text">
+                    <h1>Introduction</h1>
+                    <p>London was the most visited European city in 2021, and tourism remains a key sector in the UK economy, contributing £237 billion to national GDP in 2022.</p>
+                    <p>Although the COVID-19 pandemic severely disrupted global tourism, recent data suggest a steady recovery. According to a 2023 BBC report, international arrivals to London are nearing pre-pandemic levels, driven by renewed demand for cultural and long-haul travel.</p>
+                    <p>This recovery signals the reactivation of urban tourism networks and growing interest in personalised, digitally-supported experiences.</p>
+                </div>
+            </div>
+            
+            <div class="intro-chart-container">
+                <div class="intro-chart">
+                    <h2 style="display:none">International visitors trend (2019-2026 quarterly forecast)</h2>
+                    <div id="visitors-trend-chart"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="map" class="section">
+            <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+            <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+            <div class="control-panel">
+                <div class="panel-content">
+                    <div class="data-section main-title-section">
+                        <h3 id="map-title">Visitor analysis</h3>
+                    </div>
+                    
+                    <div class="data-section">
+                        <h3>Top 10 countries visiting the UK (2023)</h3>
+                        <div id="country-distribution-chart" class="chart"></div>
+                    </div>
+                    
+                    <div class="data-section">
+                        <h3>Stay duration</h3>
+                        <div id="stay-duration-chart" class="chart"></div>
+                    </div>
+                    
+                    <div class="data-section">
+                        <h3>Spending</h3>
+                        <div id="spending-analysis-chart" class="chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="globe-container"></div>
+        </section>
+    </div>
+
+    <script src="./travel data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Only initialize map-related functionality if we're in the map section
+            if (window.location.hash === '#map') {
+                document.getElementById('map-title').addEventListener('click', function() {
+                    if (typeof fitMapToView === 'function') {
+                        fitMapToView();
+                    }
+                });
+            }
+            
+            // Ensure trend chart container has enough height
+            const chartContainer = document.getElementById('visitors-trend-chart');
+            if (chartContainer) {
+                console.log('Trend chart container size:', chartContainer.offsetWidth, 'x', chartContainer.offsetHeight);
+                
+                // If height is insufficient, set minimum height
+                if (chartContainer.offsetHeight < 200) {
+                    chartContainer.style.minHeight = '300px';
+                    console.log('Trend chart container minimum height set to 300px');
+                }
+            } else {
+                console.error('Trend chart container not found!');
+            }
+            
+            // Load trend chart data
+            console.log('Starting to load trend chart data...');
+            fetch('https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/travel%20data/international_visitors_data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    console.log('Data response successful');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Successfully parsed JSON data:');
+                    console.log('Number of periods:', data.periods.length);
+                    console.log('Number of visitors:', data.visitors ? data.visitors.length : 0);
+                    console.log('Number of spending:', data.spending ? data.spending.length : 0);
+                    
+                    createVisitorsTrendChart(data);
+                })
+                .catch(error => {
+                    console.error('Failed to load trend chart data:', error);
+                    
+                    // Display error information in the chart area
+                    const chartElement = document.getElementById('visitors-trend-chart');
+                    if (chartElement) {
+                        chartElement.innerHTML = `
+                            <div style="padding: 20px; text-align: center; color: #ff3b30;">
+                                <h3>Data loading failed</h3>
+                                <p>${error.message}</p>
+                            </div>
+                        `;
+                    }
+                });
+        });
+        
+        // Create international visitor trend chart (both axes)
+        function createVisitorsTrendChart(data) {
+            const chartDom = document.getElementById('visitors-trend-chart');
+            if (!chartDom) {
+                console.error('Trend chart DOM element not found');
+                return;
+            }
+            
+            console.log('Initializing trend chart...');
+            const myChart = echarts.init(chartDom);
+            console.log('echarts instance created successfully');
+            
+            // Use standard data structure
+            const periods = data.periods || [];
+            const visitorValues = data.visitors || [];
+            const spendingValues = data.spending || [];
+            
+            // Ensure data is valid
+            if (periods.length === 0 || visitorValues.length === 0 || spendingValues.length === 0) {
+                console.error('Trend chart data is invalid!');
+                chartDom.innerHTML = '<div style="padding: 20px; text-align: center;">No available trend data</div>';
+                return;
+            }
+            
+            console.log(`Processed ${periods.length} data records`);
+            
+            // Get the maximum values of visitor numbers and spending amounts, for calculating the ratio
+            const maxVisitor = Math.max(...visitorValues);
+            const maxSpending = Math.max(...spendingValues);
+            
+            // To make the visitor data line chart positive, and the spending data bar chart negative
+            const negativeSpendingValues = spendingValues.map(value => -value);
+            
+            // Create a chart with both axes
+            const option = {
+                backgroundColor: '#ffffff', // Set to pure white background
+                textStyle: {
+                    fontFamily: '-apple-system, SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif',
+                    color: '#333333' // Use black text
+                },
+                grid: {
+                    left: '10%', // Increase left margin to move chart to the right
+                    right: '5%', // Increase right margin
+                    top: '5%', // Reduce top space
+                    bottom: '15%',
+                    containLabel: true
+                },
+                // Add a small title in the bottom right corner of the chart
+                graphic: [{
+                    type: 'text',
+                    z: 100,
+                    top: 400,
+                    right: 50, // Changed from 10 to 130, moving it to the left
+                    bottom: 10,
+                    style: {
+                        text: 'Visitor trend (2019-2026 quarterly forecast)',
+                        fontSize: 13,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        textVerticalAlign: 'bottom',
+                        fill: '#333'
+                    }
+                }],
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)', // White background
+                    borderColor: 'rgba(0, 0, 0, 0.05)',
+                    borderWidth: 1,
+                    textStyle: {
+                        fontSize: 12,
+                        color: '#333333' // Black text
+                    },
+                    axisPointer: {
+                        type: 'line',
+                        crossStyle: {
+                            color: '#999'
+                        },
+                        label: {
+                            show: false
+                        }
+                    },
+                    formatter: function(params) {
+                        let result = `${params[0].axisValue}<br/>`;
+                        params.forEach(param => {
+                            const marker = `<span style="display:inline-block;margin-right:4px;border-radius:50%;width:8px;height:8px;background-color:${param.color};"></span>`;
+                            let value;
+                            let unit;
+                            
+                            if (param.seriesName === 'Number of visitors') {
+                                value = param.value;
+                                unit = 'thousand';
+                                // Display the percentage change compared to the previous quarter
+                                const index = param.dataIndex;
+                                if (index > 0) {
+                                    const prevValue = visitorValues[index - 1];
+                                    if (prevValue > 0) {
+                                        const changePercent = ((value - prevValue) / prevValue * 100).toFixed(1);
+                                        result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit} (${changePercent}%)<br/>`;
+                                    } else {
+                                        result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                                    }
+                                } else {
+                                    result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                                }
+                            } else {
+                                // Remove the negative sign to display the spending amount
+                                value = Math.abs(param.value);
+                                unit = 'million £';
+                                result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                            }
+                        });
+                        return result;
+                    },
+                    extraCssText: 'border-radius: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); z-index: 9999;'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: periods,
+                    axisLabel: {
+                        interval: 'auto', // Automatically determine the display interval
+                        rotate: 45,
+                        fontSize: 10,
+                        color: '#333333' // Use black labels
+                    },
+                    axisLine: {
+                        show: true,
+                        onZero: true,
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.4)', width: 1 } // Reset to black
+                    },
+                    axisTick: { show: false },
+                    // Add a year mark in the first quarter of each year
+                    axisPointer: {
+                        show: true, // Enable the X-axis indicator
+                        type: 'line', // Line type
+                        label: {
+                            show: false
+                        },
+                        lineStyle: {
+                            color: 'rgba(0, 0, 0, 0.2)',
+                            width: 1
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        fontSize: 10,
+                        color: '#333333', // Use black labels
+                        formatter: function(value) {
+                            // Display positive values, but keep the chart distribution
+                            const absValue = Math.abs(value);
+                            if (absValue >= 1000) {
+                                return (absValue / 1000).toFixed(1) + 'k';
+                            }
+                            return absValue.toFixed(0);
+                        },
+                        // Add this line to completely solve the right white space problem
+                        margin: 0
+                    },
+                    // Add offset settings to force the y-axis to align with the left side of the chart
+                    offset: 0,
+                    position: 'left', // Ensure the Y-axis is on the left
+                    splitLine: {
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } // Reset to light gray
+                    },
+                    axisLine: { 
+                        show: true, 
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.4)', width: 1 } // Reset to black
+                    },
+                    axisTick: { show: false },
+                    // Set the value range of the y-axis to center the X-axis
+                    max: maxVisitor * 1.1,
+                    min: -maxSpending * 1.1,
+                    // Add auxiliary separation lines
+                    splitNumber: 6
+                },
+                series: [
+                    {
+                        name: 'Number of visitors',
+                        type: 'line',
+                        data: visitorValues,
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 6,
+                        lineStyle: {
+                            width: 3,
+                            color: '#5470c6'
+                        },
+                        itemStyle: {
+                            color: '#5470c6',
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(84, 112, 198, 0.7)' },
+                                    { offset: 1, color: 'rgba(84, 112, 198, 0.05)' }
+                                ]
+                            }
+                        },
+                        emphasis: {
+                            focus: 'series',
+                            itemStyle: {
+                                borderWidth: 3,
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(84, 112, 198, 0.5)',
+                                borderColor: '#fff'
+                            },
+                            scale: true,
+                            symbolSize: 12
+                        },
+                        label: {
+                            show: false
+                        },
+                        markLine: {
+                            silent: true,
+                            lineStyle: {
+                                color: '#999', // Reset to gray
+                                type: 'dashed',
+                                width: 1,
+                                opacity: 0.3
+                            },
+                            data: [
+                                // Add a horizontal reference line
+                                {
+                                    yAxis: 0,
+                                    label: { show: false }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'Spending amount',
+                        type: 'bar',
+                        data: negativeSpendingValues, // Use negative values to make the bar chart downward
+                        barWidth: '60%',
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(
+                                0, 0, 0, 1,
+                                [
+                                    {offset: 0, color: '#bc4740'},
+                                    {offset: 1, color: '#d58681'}
+                                ]
+                            ),
+                            opacity: 0.85
+                        },
+                        emphasis: {
+                            focus: 'series',
+                            itemStyle: {
+                                opacity: 1
+                            }
+                        },
+                        // Remove the label for very small values
+                        label: {
+                            show: false
+                        },
+                        // Remove the mark point for the maximum spending
+                        markPoint: {
+                            show: false
+                        },
+                        tooltip: {
+                            show: true
+                        }
+                    }
+                ],
+                animationDuration: 2000,
+                animationEasing: 'cubicOut'
+            };
+            
+            console.log('Setting chart options...');
+            try {
+                myChart.setOption(option);
+                console.log('Trend chart set successfully');
+                
+                // Immediately resize to ensure correct rendering
+                setTimeout(() => {
+                    myChart.resize();
+                    console.log('Trend chart size adjusted');
+                }, 100);
+            } catch (error) {
+                console.error('Error setting trend chart options:', error);
+            }
+            
+            // Respond to window size changes
+            window.addEventListener('resize', function() {
+                if (myChart && myChart.resize) {
+                    myChart.resize();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

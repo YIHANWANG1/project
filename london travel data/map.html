@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Visitors Data</title>
+    <link rel="stylesheet" href="./travel data.css">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="scroll-container">
+        <section id="map" class="section">
+            <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+            <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+            <div class="control-panel">
+                <div class="panel-content">
+                    <div class="data-section main-title-section">
+                        <h3 id="map-title">Visitor analysis</h3>
+                    </div>
+                    <div class="data-section">
+                        <h3>Top 10 countries visiting the UK (2023)</h3>
+                        <div id="country-distribution-chart" class="chart"></div>
+                    </div>
+                    <div class="data-section">
+                        <h3>Stay duration in London</h3>
+                        <div id="stay-duration-chart" class="chart"></div>
+                    </div>
+                    <div class="data-section">
+                        <h3>Spending in London</h3>
+                        <div id="spending-analysis-chart" class="chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="globe-container"></div>
+        </section>
+    </div>
+    <button id="trigger-map-init" style="
+      position:fixed;top:350px;right:380px;z-index:9999;
+      background:rgba(255,255,255,0.85);color:#6366f1;border:3px solid #6366f1;
+      padding:12px 24px;border-radius:10px;font-weight:700;font-size:22px;
+      box-shadow:0 2px 12px rgba(99,102,241,0.15);cursor:pointer;transition:background 0.2s, color 0.2s, border 0.2s;
+      opacity:0.9;">
+      Activate Map Animation
+    </button>
+    <script src="./travel data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('map-title').addEventListener('click', function() {
+                if (typeof fitMapToView === 'function') {
+                    fitMapToView();
+                }
+            });
+        });
+        document.getElementById('trigger-map-init').onclick = function() {
+            const scrollContainer = document.querySelector('.scroll-container');
+            if (scrollContainer) {
+                scrollContainer.dispatchEvent(new Event('scroll'));
+            }
+            this.style.display = 'none';
+        };
+    </script>
+</body>
+</html>

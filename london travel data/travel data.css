@@ -1,0 +1,1035 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Scroll container */
+.scroll-container {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y proximity; /* Changed to proximity for more natural scrolling */
+    margin: 0;
+    padding: 0;
+}
+
+/* Page common styles */
+.section {
+    width: 100%;
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* Introduction page styles */
+#intro {
+    background-image: none;
+    background-color: #ffffff;
+    position: relative;
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: auto; /* Allow vertical scrolling when content doesn't fit */
+    margin: 0;
+    padding: 0;
+    min-height: 650px; /* Ensure minimum height for content */
+}
+
+/* Text container and chart container layout */
+.intro-text-container {
+    position: absolute;
+    top: 150px;
+    left: 50px;
+    width: 500px;
+    max-width: 35%;
+    z-index: 10;
+}
+
+.intro-chart-container {
+    position: absolute;
+    top: 228px;
+    right: 0px;
+    width: 65%;
+    max-width: 900px;
+    height: 450px;
+    z-index: 5;
+}
+
+/* Left text area */
+.intro-text {
+    text-align: left;
+    color: #333;
+    text-shadow: none;
+    padding: 20px;
+    min-width: 300px;
+    max-width: 100%;
+    align-self: flex-start;
+    position: relative;
+    z-index: 10;
+}
+
+.intro-text h1 {
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-shadow: none;
+    position: relative;
+    z-index: 10;
+    text-align: left;
+}
+
+.intro-text p {
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    text-shadow: none;
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+/* Right trend chart area */
+.intro-chart {
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    height: 450px;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    overflow: visible;
+    width: 100%;
+    margin: 0;
+    position: relative;
+    min-width: 600px;
+}
+
+/* Hide original title */
+.intro-chart h2 {
+    display: none;
+}
+
+#visitors-trend-chart {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    background-color: #ffffff;
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    margin: 0;
+    position: relative;
+}
+
+/* Ensure tooltip displays properly */
+.echarts-tooltip {
+    position: absolute;
+    z-index: 9999 !important;
+    pointer-events: none;
+}
+
+/* Remove styles that might interfere with tooltip display */
+#visitors-trend-chart div {
+    overflow: visible !important;
+}
+
+/* Remove hover effect */
+
+.intro-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: transparent; /* Remove background color */
+    color: white; /* Change to white text */
+    padding: 0; /* Remove padding */
+    border-radius: 0; /* Remove rounded corners */
+    text-align: center;
+    max-width: 95%; /* Increase maximum width */
+    width: 100%; /* Use full width */
+    box-shadow: none; /* Remove shadow */
+    backdrop-filter: none; /* Remove blur effect */
+    -webkit-backdrop-filter: none;
+    border: none; /* Remove border */
+}
+
+.intro-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600; /* Apple font weight */
+    color: #111; /* Darker text color */
+}
+
+.intro-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+    color: rgba(51, 51, 51, 0.9); /* Semi-transparent gray text */
+}
+
+/* Map page styles */
+#map {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Map container styles */
+#globe-container {
+    flex: 1;
+    height: 100vh !important;
+    width: 100vw !important;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    min-height: 600px;
+}
+
+/* Control panel styles - white Apple style */
+.control-panel {
+    width: 400px;
+    max-width: 35%; 
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95); /* White background */
+    color: #333; /* Dark gray text */
+    overflow-y: auto;
+    overflow-x: visible; /* Allow content to extend beyond panel width if needed */
+    z-index: 10;
+    transition: transform 0.3s ease;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    flex-shrink: 0;
+    backdrop-filter: blur(20px); /* Apple style blur effect */
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Hide scrollbar in fullscreen but show when needed */
+@media (min-height: 800px) {
+    .control-panel {
+        overflow-y: hidden; /* Hide scrollbar in fullscreen/large heights */
+    }
+    
+    /* Show scrollbar when hovering, for cases where content might still overflow */
+    .control-panel:hover {
+        overflow-y: auto; /* Show scrollbar when hovering */
+    }
+}
+
+.panel-header {
+    display: none; /* Completely hidden, no longer used */
+}
+
+/* Main panel content area adjustments - optimized for single page display */
+.panel-content {
+    padding: 0.3rem 1.2rem; /* Reduce vertical padding */
+    padding-top: 0.3rem; /* Add minimal top padding to ensure title doesn't touch top */
+    padding-bottom: 1rem; /* Increase bottom padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Change to flex-start instead of space-between */
+    min-height: 100%; /* Fill entire panel height */
+    overflow: visible; /* Allow content to overflow */
+}
+
+/* International visitors analysis title area styles - reduced space */
+.main-title-section {
+    padding-top: 0.5rem; /* Reduce top padding */
+    margin-bottom: 0.3rem; /* Reduce bottom margin */
+    text-align: center; /* Keep centered */
+    margin-top: 1rem; /* Add top margin to move title down */
+}
+
+/* Data section compressed height */
+.data-section {
+    margin-bottom: 1rem; /* Increase spacing between sections */
+    background-color: transparent; /* Keep transparent background */
+    border-radius: 0; /* Keep no rounded corners */
+    padding: 0.1rem 0; /* Reduce vertical padding */
+    box-shadow: none; /* Keep no shadow */
+    border: none; /* Keep no border */
+    overflow: visible; /* Allow content to overflow if needed */
+}
+
+/* Top 10 Countries visiting UK moved up */
+.data-section:nth-child(2) {
+    margin-top: 1rem; /* Changed from -0.8rem to 1.2rem to move downward */
+    padding-top: 0; /* Remove top padding */
+}
+
+/* Stay duration section adjustment */
+.data-section:nth-child(3) {
+    margin-top: -0.5rem; /* Reduce upward movement */
+    padding-top: 0; /* Remove top padding */
+}
+
+/* Spending amount moved down */
+.data-section:nth-child(4) {
+    margin-top: -0.5rem; /* Don't move down anymore */
+    padding-top: 0; /* Remove top padding */
+    margin-bottom: 0.2rem; /* Reduce bottom margin */
+}
+
+/* Adjust chart heights to display completely within one screen */
+.chart {
+    width: 100%;
+    height: 170px; /* Overall reduced height */
+    background-color: transparent; /* Keep transparent background */
+    border-radius: 0; /* Keep no rounded corners */
+    overflow: visible; /* Change from hidden to visible to allow legends to show outside chart area */
+    border: none; /* Keep no border */
+    margin-bottom: 25px; /* Add bottom margin for legends */
+    position: relative; /* Add position relative for legend placement */
+}
+
+/* Stay duration chart specific adjustments */
+.data-section:nth-child(3) .chart {
+    height: 180px; /* Slightly taller for duration chart */
+    margin-bottom: 30px; /* Extra space for legend */
+}
+
+/* Spending amount chart height adjustment */
+.data-section:nth-child(4) .chart {
+    height: 180px; /* Keep slightly taller */
+    margin-bottom: 30px; /* Extra space for legend */
+    padding-left: 10px; /* Add left padding to ensure continent names are visible */
+    overflow: visible; /* Allow continent names to extend outside the chart area */
+}
+
+/* Adjust distance between title and chart */
+.data-section h3 {
+    font-size: 0.9rem; /* Slightly reduce font size */
+    margin-bottom: 0.3rem; /* Reduce spacing below */
+    color: #111; /* Keep dark text */
+    text-align: left; /* Keep left alignment */
+    font-weight: 600; /* Keep Apple font weight */
+    padding-left: 0.3rem; /* Keep left padding */
+    position: relative; /* Keep position for pseudo-element */
+}
+
+/* Add separator below title, reduce spacing */
+.data-section:not(.main-title-section) h3::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.08); /* Keep light gray */
+    margin-top: 0.2rem; /* Reduce spacing with title */
+    margin-bottom: 0.2rem; /* Reduce spacing with chart */
+    width: 100%; /* Keep spanning entire container */
+}
+
+/* Specially adjust spacing between title and chart for stay duration section */
+.data-section:nth-child(3) h3::after {
+    margin-bottom: 0.2rem !important; /* Keep consistent with others */
+}
+
+/* Remove map-title hover effect, but keep click functionality and remove underline */
+#map-title {
+    cursor: pointer; /* Keep pointer style for clicking to reset map */
+}
+
+/* Specially override underline style for map-title */
+#map-title::after {
+    display: none !important; /* Completely remove underline */
+}
+
+/* Custom scrollbar - white Apple style */
+.control-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.control-panel::-webkit-scrollbar-track {
+    background: rgba(240, 240, 240, 0.5); /* Light gray track */
+    border-radius: 10px;
+}
+
+.control-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(200, 200, 200, 0.7); /* Gray slider */
+    border-radius: 10px;
+    border: 2px solid rgba(240, 240, 240, 0.1); /* Border */
+}
+
+.control-panel::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(180, 180, 180, 0.9); /* Slightly darker when hovering */
+}
+
+/* Add specific map globe style fixes */
+.mapboxgl-canvas {
+    outline: none !important;
+    filter: contrast(1.05) saturate(1.05) brightness(1.07);
+}
+
+.mapboxgl-canvas-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Fix globe overflow issue in certain situations */
+.mapboxgl-map {
+    overflow: hidden !important;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Responsive design */
+@media (max-width: 992px) {
+    .control-panel {
+        width: 340px;
+    }
+    .intro-text-container {
+        width: 40%;
+        left: 30px;
+    }
+    
+    .intro-chart-container {
+        width: 55%;
+        right: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    #intro {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .intro-text-container {
+        position: relative;
+        top: 20px;
+        left: 20px;
+        width: 90%;
+        max-width: 90%;
+        margin-bottom: 20px;
+    }
+    
+    .intro-chart-container {
+        position: relative;
+        top: 20px;
+        right: auto;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 400px; /* Slightly reduced but still functional */
+    }
+    
+    .intro-chart {
+        min-width: 300px;
+        height: 400px;
+        min-height: 400px;
+    }
+    
+    #visitors-trend-chart {
+        width: 100%;
+        min-height: 400px;
+    }
+    
+    .control-panel {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 45%;
+        max-height: 50%;
+        overflow-y: auto;
+    }
+    
+    #globe-container {
+        height: 55%;
+        width: 100%;
+    }
+    
+    .chart {
+        height: 140px;
+    }
+    
+    .data-section:nth-child(4) .chart {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 12px;
+    }
+    
+    .intro-content {
+        padding: 1.5rem;
+    }
+    
+    .intro-text-container {
+        width: 90%;
+        max-width: 90%;
+    }
+    
+    .intro-chart-container {
+        width: 90%;
+        max-width: 90%;
+    }
+    
+    .control-panel {
+        height: auto;
+        min-height: 48%;
+        max-height: 52%;
+    }
+    
+    #globe-container {
+        height: 48%;
+        width: 100%;
+    }
+    
+    .filter-section, .data-section {
+        padding: 0.1rem;
+    }
+    
+    .chart {
+        height: 120px;
+    }
+    
+    .data-section:nth-child(4) .chart {
+        height: 130px;
+    }
+    
+    .data-section:not(.main-title-section) h3::after {
+        margin-top: 0.1rem;
+        margin-bottom: 0.1rem;
+    }
+}
+
+/* Error message styles - white Apple style */
+.error-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95); /* White background */
+    color: #333; /* Dark gray text */
+    padding: 30px;
+    border-radius: 16px; /* Larger rounded corners */
+    z-index: 2000;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* White theme shadow */
+    backdrop-filter: blur(20px); /* Apple style blur effect */
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Add thin border */
+}
+
+.error-message h3 {
+    color: #FF3B30; /* Keep Apple red for errors */
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: 600; /* Apple font weight */
+}
+
+.error-message p {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: rgba(51, 51, 51, 0.9); /* Slightly transparent text */
+}
+
+.error-message ul {
+    text-align: left;
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+.error-message button {
+    background-color: rgba(0, 0, 0, 0.8); /* Black button */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px; /* Larger rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 500; /* Apple font weight */
+}
+
+.error-message button:hover {
+    background-color: rgba(0, 0, 0, 0.9); /* Slightly darker black */
+}
+
+.error-message button:active {
+    transform: scale(0.98);
+    background-color: #000; /* Pure black */
+}
+
+/* Country marker styles - white Apple style */
+.country-marker {
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.country-marker:hover {
+    transform: scale(2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Gray-black glow */
+}
+
+/* Mapbox popup styles - white Apple style */
+.mapboxgl-popup {
+    max-width: 220px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    z-index: 1000 !important; /* Ensure popup appears in top layer */
+}
+
+.mapboxgl-popup-content {
+    background-color: rgba(255, 255, 255, 0.95) !important; /* White background */
+    color: #333 !important; /* Dark gray text */
+    padding: 1rem !important;
+    border-radius: 12px !important; /* Larger rounded corners */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important; /* Lighter shadow */
+    backdrop-filter: blur(20px) !important; /* Apple style blur effect */
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important; /* Subtle border */
+}
+
+.mapboxgl-popup-close-button {
+    color: rgba(0, 0, 0, 0.5) !important; /* Gray button */
+    font-size: 1.2rem !important;
+    padding: 0.5rem !important;
+    background: none !important;
+    border: none !important;
+    font-weight: 300 !important; /* Thinner close button */
+    top: 4px !important;
+    right: 6px !important;
+}
+
+.mapboxgl-popup-close-button:hover {
+    color: rgba(0, 0, 0, 0.8) !important; /* Darker when hovering */
+    background: none !important;
+}
+
+.mapboxgl-popup-content h3 {
+    color: #111 !important; /* Dark text */
+    margin-bottom: 0.8rem !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important; /* Apple font weight */
+}
+
+.mapboxgl-popup-content p {
+    margin: 0.5rem 0 !important;
+    font-size: 0.9rem !important;
+    color: rgba(51, 51, 51, 0.9) !important; /* Slightly transparent text */
+    line-height: 1.4 !important;
+}
+
+.mapboxgl-popup-content b {
+    color: #333 !important; /* Dark gray highlight */
+    font-weight: 500 !important; /* Apple font weight */
+}
+
+/* Remove arrow or make it more compatible with Apple style */
+.mapboxgl-popup-tip {
+    border-top-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Map control styles - white Apple style */
+.mapboxgl-ctrl-group {
+    background-color: rgba(255, 255, 255, 0.85) !important; /* White background */
+    border: none !important;
+    border-radius: 10px !important; /* Larger rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important; /* Lighter shadow */
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    overflow: hidden !important;
+}
+
+.mapboxgl-ctrl-group button {
+    width: 35px !important;
+    height: 35px !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: #333 !important; /* Dark gray */
+}
+
+.mapboxgl-ctrl-group button:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important; /* Light gray hover effect */
+}
+
+.mapboxgl-ctrl button.mapboxgl-ctrl-zoom-in .mapboxgl-ctrl-icon,
+.mapboxgl-ctrl button.mapboxgl-ctrl-zoom-out .mapboxgl-ctrl-icon,
+.mapboxgl-ctrl button.mapboxgl-ctrl-compass .mapboxgl-ctrl-icon {
+    background-color: transparent !important;
+    filter: none !important; /* Remove inversion */
+}
+
+/* Responsive popup styles */
+@media (max-width: 768px) {
+    .mapboxgl-popup {
+        max-width: 250px !important;
+    }
+    
+    .mapboxgl-popup-content {
+        padding: 0.8rem !important;
+    }
+    
+    .mapboxgl-popup-content h3 {
+        font-size: 1rem !important;
+    }
+    
+    .mapboxgl-popup-content p {
+        font-size: 0.8rem !important;
+    }
+    
+    .mapboxgl-ctrl-group button {
+        width: 32px !important;
+        height: 32px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .mapboxgl-popup {
+        max-width: 200px !important;
+    }
+    
+    .mapboxgl-popup-content {
+        padding: 0.7rem !important;
+    }
+    
+    .mapboxgl-popup-content h3 {
+        font-size: 0.9rem !important;
+    }
+    
+    .mapboxgl-popup-content p {
+        font-size: 0.75rem !important;
+    }
+    
+    .mapboxgl-ctrl-group button {
+        width: 30px !important;
+        height: 30px !important;
+    }
+}
+
+/* Reset view button styles - white Apple style */
+.reset-view-button {
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+#reset-map-view {
+    background-color: rgba(0, 0, 0, 0.8); /* Black button */
+    color: white;
+    border: none;
+    border-radius: 10px; /* Larger rounded corners */
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    width: 85%;
+    font-weight: 500; /* Apple font weight */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#reset-map-view:hover {
+    background-color: rgba(0, 0, 0, 0.9); /* Slightly darker black */
+}
+
+#reset-map-view:active {
+    transform: scale(0.98);
+    background-color: #000; /* Pure black */
+}
+
+/* Add additional pulse effect styles for light trail points */
+@keyframes glow-pulse {
+    0% {
+        box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2); /* Gray glow */
+    }
+    50% {
+        box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.1); /* Gray glow */
+    }
+    100% {
+        box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2); /* Gray glow */
+    }
+}
+
+.light-point {
+    background-color: rgba(0, 0, 0, 0.6); /* Dark gray */
+    border-radius: 50%;
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+
+/* Add moving point styles - white Apple style */
+.moving-point {
+    width: 2.25px;
+    height: 2.25px;
+    border-radius: 50%;
+    background-color: #222222;
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    transition: transform 0.2s ease-out;
+}
+
+@keyframes pulse-moving {
+    0% {
+        opacity: 0.9;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.moving-point {
+    animation: pulse-moving 1.5s infinite;
+}
+
+/* Set different colors based on different transportation modes - all use dark gray */
+.moving-point.mode-air,
+.moving-point.mode-sea,
+.moving-point.mode-tunnel,
+.moving-point.mode-rail,
+.moving-point.mode-other {
+    background-color: #222222;
+}
+
+/* Moving point popup styles - white Apple style */
+.point-popup {
+    background-color: rgba(255, 255, 255, 0.95) !important; /* White background */
+    color: #333 !important; /* Dark gray text */
+    padding: 0.8rem !important;
+    border-radius: 12px !important; /* Larger rounded corners */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important; /* Lighter shadow */
+    backdrop-filter: blur(20px) !important; /* Apple style blur effect */
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important; /* Thin border */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    z-index: 1000 !important; /* Ensure popup appears on top */
+}
+
+.point-popup strong {
+    display: block;
+    color: #111 !important; /* Dark text */
+    margin-bottom: 0.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important; /* Apple font weight */
+}
+
+.point-popup p {
+    margin: 0.3rem 0 !important;
+    font-size: 0.85rem !important;
+    color: rgba(51, 51, 51, 0.9) !important; /* Slightly transparent text */
+}
+
+.point-popup b {
+    color: #333 !important; /* Dark gray highlighted text */
+    font-weight: 500 !important; /* Apple font weight */
+}
+
+@media (max-width: 768px) {
+    .moving-point {
+        width: 3px;
+        height: 3px;
+    }
+    
+    .point-popup {
+        padding: 0.7rem !important;
+    }
+    
+    .point-popup strong {
+        font-size: 0.9rem !important;
+    }
+    
+    .point-popup p {
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .moving-point {
+        width: 2.25px;
+        height: 2.25px;
+    }
+    
+    .point-popup {
+        padding: 0.6rem !important;
+    }
+    
+    .point-popup strong {
+        font-size: 0.85rem !important;
+    }
+    
+    .point-popup p {
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Mapbox map name style override */
+.mapboxgl-map {
+    font-size: 90% !important; /* Increased from 80% to 90% */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+/* Try adjusting certain place name labels */
+.mapboxgl-map .mapboxgl-canvas-container .mapboxgl-canvas {
+    font-size: 90% !important; /* Increased from 80% to 90% */
+}
+
+/* Reduce interest point label visibility, but not completely hide */
+.mapboxgl-map [class*="poi-label"] {
+    opacity: 0.6 !important; /* Increased from 0.5 to 0.6 */
+    visibility: visible !important;
+}
+
+/* Adjust place name label size */
+.mapboxgl-map [class*="place-label"],
+.mapboxgl-map [class*="country-label"],
+.mapboxgl-map [class*="state-label"],
+.mapboxgl-map [class*="settlement-label"] {
+    font-size: 90% !important; /* Increased from 80% to 90% */
+    opacity: 0.9 !important; /* Increased from 0.8 to 0.9 */
+}
+
+/* Filter section styles - white Apple style */
+.filter-section {
+    background-color: rgba(250, 250, 250, 0.9); /* Near white background */
+    border-radius: 12px; /* Larger corner radius */
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Add thin border */
+}
+
+.filter-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: #111; /* Dark gray */
+    text-align: center;
+    font-weight: 600; /* Apple font weight */
+}
+
+.filter-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.filter-item label {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.7); /* Dark gray text */
+    font-weight: 500; /* Apple font weight */
+}
+
+.filter-item select {
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px; /* Larger corner radius */
+    background-color: rgba(255, 255, 255, 0.8); /* White background */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Thin border */
+    color: #333; /* Dark gray text */
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none; /* Remove default style */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2rem;
+}
+
+.filter-item select:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.3); /* Darker border */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05); /* Apple style focus shadow */
+}
+
+/* International visitors analysis title style */
+.main-title-section h3 {
+    font-size: 1.3rem !important; /* Slightly reduced but still keep noticeable larger */
+    font-weight: 600;
+    text-align: center !important; /* Ensure centered */
+    padding-left: 0 !important; /* Remove left padding */
+}
+
+/* Custom styling for chart axis labels */
+.chart text {
+    font-weight: 500 !important; /* Make text slightly bolder */
+    fill: #333333 !important; /* Darker text color */
+    font-size: 11px !important; /* Consistent font size */
+}
+
+/* Ensure text is visible and not cut off */
+.chart .echarts-tooltip, 
+.chart .echarts-axis-labels {
+    overflow: visible !important;
+    z-index: 100 !important;
+}
+
+/* Special styling for spending chart labels */
+#spending-analysis-chart text {
+    overflow: visible !important;
+    white-space: normal !important;
+}
+
+/* Top 10 countries section title specific adjustment */
+.data-section:nth-child(2) h3 {
+    margin-bottom: 0.8rem; /* Increase bottom margin to create more space between title and chart */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-height: 700px) {
+    .intro-text-container {
+        top: 80px; /* Move text higher in short windows */
+    }
+    
+    .intro-chart-container {
+        top: 180px; /* Move chart higher in short windows */
+        height: 380px; /* Reduce chart height in short windows */
+    }
+    
+    #visitors-trend-chart {
+        min-height: 380px !important; /* Ensure chart fits smaller height */
+    }
+    
+    .intro-text h1 {
+        font-size: 2rem; /* Smaller heading on short screens */
+        margin-bottom: 1rem;
+    }
+    
+    .intro-text p {
+        font-size: 0.9rem; /* Smaller text on short screens */
+        margin-bottom: 0.8rem;
+    }
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Change a map's style configuration property</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.css" rel="stylesheet">
+<link href="Top10.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.11.1/mapbox-gl.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div id="map"></div>
+
+<div id="landmarkInfo" class="landmark-info">
+    <h2 id="currentLandmark"></h2>
+</div>
+
+<div id="infoBox" class="info-box">
+    <h3 id="infoTitle">Landmark Information <button class="info-box-toggle"><i class="fa-solid fa-chevron-up"></i></button></h3>
+    <div class="info-box-content">
+    <p id="infoDescription">Select a landmark to view details...</p>
+    </div>
+</div>
+
+<!-- Image overlay container -->
+<div id="imageOverlay" class="image-overlay">
+    <div id="mosaicContainer" class="mosaic-container"></div>
+</div>
+
+<script src="Top10.js"></script>
+</body>
+</html>
+ 

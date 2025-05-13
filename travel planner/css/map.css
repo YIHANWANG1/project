@@ -1,0 +1,830 @@
+/* map container */
+.map-container {
+    position: relative;
+    grid-row: span 2;
+    height: 100%;
+    min-height: 70vh;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: none;
+    z-index: 1;
+}
+
+/* map initial state overlay */
+.map-initial-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 15%;
+    z-index: 10;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* media query, adjust padding based on screen size */
+@media (max-width: 768px) {
+    .map-initial-overlay {
+        padding-top: 25%; /* increase padding-top on small screens */
+    }
+}
+
+@media (min-width: 1200px) {
+    .map-initial-overlay {
+        padding-top: 25%; /* decrease padding-top on large screens */
+    }
+}
+
+.map-prompt-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 25px 0;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    position: relative;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.map-prompt-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 12px;
+}
+
+.map-prompt-text {
+    font-size: 1.1rem;
+    color: #86868b;
+    line-height: 1.5;
+}
+
+@media (min-width: 992px) {
+    .map-container {
+        height: 100%;
+        min-height: auto;
+    }
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    min-height: 70vh;
+}
+
+/* map control buttons */
+.map-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+.map-controls button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #1d1d1f;
+}
+
+.map-controls button:hover {
+    background-color: #f5f5f7;
+    transform: translateY(-2px);
+}
+
+.map-controls button.active {
+    background-color: #0071e3;
+    color: white;
+}
+
+#explore-area.active {
+    background-color: #0071e3;
+    color: white;
+}
+
+/* custom map markers */
+.map-marker {
+    width: 30px;
+    height: 30px;
+    background-color: #0071e3;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 0 2px white, 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.map-marker:hover {
+    transform: scale(1.1);
+}
+
+/* marker colors for different activity types */
+.marker-food {
+    background-color: #ff9500;
+}
+
+.marker-attraction {
+    background-color: #0071e3;
+}
+
+.marker-activity {
+    background-color: #34c759;
+}
+
+.marker-hotel {
+    background-color: #5856d6;
+}
+
+/* route styles */
+.route-line {
+    stroke-width: 4;
+    stroke-opacity: 0.7;
+}
+
+.route-walking {
+    stroke: #0071e3;
+}
+
+.route-driving {
+    stroke: #ff9500;
+}
+
+.route-transit {
+    stroke: #34c759;
+}
+
+.route-cycling {
+    stroke: #5856d6;
+}
+
+/* custom map popup styles */
+.mapboxgl-popup {
+    max-width: 300px;
+}
+
+.mapboxgl-popup-content {
+    padding: 16px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    color: #1d1d1f;
+    border: none;
+}
+
+.mapboxgl-popup-close-button {
+    font-size: 16px;
+    color: #86868b;
+    right: 10px;
+    top: 10px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.mapboxgl-popup-close-button:hover {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popup-title {
+    font-weight: 600;
+    color: #0071e3;
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+
+.popup-address {
+    font-size: 14px;
+    color: #86868b;
+}
+
+.popup-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.popup-button {
+    background-color: #f5f5f7;
+    color: #0071e3;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.popup-button:hover {
+    background-color: #e5e5ea;
+}
+
+/* POI type selector styles */
+.poi-type-selector {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 250px;
+    z-index: 100;
+    display: none;
+    border: 1px solid #d2d2d7;
+}
+
+.poi-type-heading, .walking-time-heading {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #1d1d1f;
+    font-size: 14px;
+    position: relative;
+}
+
+.poi-type-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.poi-type-options label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+}
+
+.poi-type-options label:hover {
+    background-color: #f5f5f7;
+}
+
+.poi-type-options label.active {
+    background-color: #f5f5f7;
+    color: #0071e3;
+}
+
+.poi-type-options i {
+    margin-right: 8px;
+    font-size: 14px;
+    width: 16px;
+    text-align: center;
+}
+
+.poi-type-checkbox {
+    margin-right: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #d2d2d7;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.poi-type-checkbox:checked {
+    background-color: #0071e3;
+    border-color: #0071e3;
+}
+
+.poi-type-checkbox:checked::after {
+    content: '\2713';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+}
+
+.walking-time-selector {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+}
+
+.walking-time-options {
+    display: flex;
+    gap: 10px;
+}
+
+.time-badge {
+    padding: 6px 12px;
+    border-radius: 15px;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-badge:hover {
+    background-color: #e5e5ea;
+}
+
+.time-badge.active {
+    background-color: #0071e3;
+    color: white;
+}
+
+.walking-distance {
+    font-size: 12px;
+    color: #86868b;
+    margin-left: 4px;
+}
+
+.poi-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: #86868b;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.2s ease;
+}
+
+.poi-close-btn:hover {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+}
+
+/* explore button */
+.explore-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    background-color: #0071e3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    gap: 6px;
+}
+
+.explore-btn:hover {
+    background-color: #0062c3;
+}
+
+.explore-btn i {
+    font-size: 14px;
+}
+
+/* loading animation */
+.map-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 5;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* adapt to mobile devices */
+@media (max-width: 767px) {
+    .map-container {
+        grid-row: auto;
+        min-height: 50vh;
+    }
+    
+    #map {
+        min-height: 50vh;
+    }
+} 
+
+/* user location marker */
+.user-location-marker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #3498db;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3), 0 0 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.user-location-marker::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(52, 152, 219, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.user-location-marker::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.user-location-marker i {
+    display: none;
+}
+
+/* user location popup label styles */
+.location-popup {
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* POI marker styles */
+.poi-marker {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1px solid;
+}
+
+.poi-marker i {
+    font-size: 10px;
+}
+
+.poi-marker:hover {
+    transform: scale(1.1);
+}
+
+.poi-food {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.poi-accommodation {
+    border-color: #9b59b6;
+    color: #9b59b6;
+}
+
+.poi-transport {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.poi-market {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.poi-attraction {
+    border-color: #2ecc71;
+    color: #2ecc71;
+}
+
+/* loading toast */
+.loading-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+}
+
+.loading-toast i {
+    font-size: 16px;
+}
+
+/* responsive design */
+@media (max-width: 768px) {
+    .poi-type-selector {
+        width: 130px;
+        top: auto;
+        bottom: 70px;
+        left: 10px;
+        max-height: 300px;
+    }
+    
+    .map-controls {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .map-controls button {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .itinerary-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .explore-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .walking-time-options {
+        flex-direction: column;
+    }
+    
+    .time-badge {
+        padding: 3px 5px;
+        font-size: 10px;
+        width: 60px;
+    }
+} 
+
+/* color definitions */
+.ten-min {
+    background-color: #3498db;
+}
+
+.fifteen-min {
+    background-color: #2ecc71;
+}
+
+/* itinerary title display */
+.itinerary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.itinerary-header h2 {
+    margin: 0;
+}
+
+/* route endpoint label styles */
+.route-endpoint-popup .mapboxgl-popup-content {
+    padding: 5px 10px;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.start-popup .mapboxgl-popup-content {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: bold;
+}
+
+.end-popup .mapboxgl-popup-content {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+}
+
+.endpoint-label {
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* custom route start and end markers */
+.custom-marker {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.route-start-marker {
+    background-color: #2ecc71;
+    color: white;
+    z-index: 5;
+}
+
+.route-end-marker {
+    background-color: #e74c3c;
+    color: white;
+    z-index: 5;
+}
+
+/* POI popup styles */
+.poi-popup {
+    padding: 8px;
+}
+
+.poi-popup h3 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.poi-popup p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #555;
+}
+
+.poi-popup i {
+    width: 16px;
+    text-align: center;
+    margin-right: 5px;
+    color: #777;
+}
+
+.poi-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.navigate-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.navigate-btn:hover {
+    background-color: #2980b9;
+}
+
+/* transit info styles in navigation panel */
+.navigation-panel .transit-info {
+    margin: 6px 0;
+    padding: 5px 8px;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    font-size: 0.95em;
+    border-left: 3px solid #3498db;
+}
+
+.navigation-panel .transit-info i {
+    margin-right: 5px;
+    color: #3498db;
+}
+
+.navigation-panel .transit-info strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.navigation-panel .transit-stops {
+    margin-top: 4px;
+    margin-left: 22px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.navigation-panel .transit-times {
+    margin-top: 2px;
+    margin-left: 22px;
+    font-size: 0.85em;
+    color: #777;
+}
+
+/* transport icon colors */
+.navigation-panel .step-content .fa-subway {
+    color: #e74c3c; /* subway icon red */
+}
+
+.navigation-panel .step-content .fa-bus {
+    color: #3498db; /* bus icon blue */
+}
+
+.navigation-panel .step-content .fa-train {
+    color: #2ecc71; /* train icon green */
+}
+
+/* explore drag marker - 自定义可拖拽的探索中心点 */
+.explore-drag-marker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #0071e3;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.3), 0 3px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    z-index: 50;
+    transition: all 0.2s ease;
+}
+
+.explore-drag-marker i {
+    color: white;
+    font-size: 18px;
+}
+
+.explore-drag-marker:hover {
+    transform: scale(1.1);
+    background-color: #0062c3;
+} 

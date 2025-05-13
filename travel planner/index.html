@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London Travel Planner</title>
+    <link rel="stylesheet" href="css/function.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ensure the itinerary container is hidden by default */
+        #itinerary-container {
+            display: none;
+        }
+        
+        /* back button style */
+        .back-button {
+            margin-bottom: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* info message style */
+        .info-message {
+            background-color: #f8f9fa;
+            border-left: 4px solid #17a2b8;
+            padding: 10px 15px;
+            margin: 10px 0;
+            color: #495057;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+        </header>
+
+        <main>
+            <div class="planner-container">
+                <section class="planner-form">
+                    <h2>Travel Planner</h2>
+                    <form id="trip-form">
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" value="London" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="days">Days</label>
+                            <select id="days" required>
+                                <option value="1">1 day</option>
+                                <option value="2">2 days</option>
+                                <option value="3" selected>3 days</option>
+                                <option value="4">4 days</option>
+                                <option value="5">5 days</option>
+                                <option value="6">6 days</option>
+                                <option value="7">7 days</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="interests">Interests</label>
+                            <div class="tag-selector-container">
+                                <div class="selected-tags" id="selected-interests"></div>
+                                <div class="tags-dropdown">
+                                    <input type="text" class="tags-input" placeholder="Select interests..." readonly>
+                                    <div class="tags-dropdown-content">
+                                        <div class="tag-option" data-value="art">
+                                            <i class="fas fa-check"></i> Art
+                                        </div>
+                                        <div class="tag-option" data-value="theater">
+                                            <i class="fas fa-check"></i> Theater
+                                        </div>
+                                        <div class="tag-option" data-value="museums">
+                                            <i class="fas fa-check"></i> Museums
+                                        </div>
+                                        <div class="tag-option" data-value="history">
+                                            <i class="fas fa-check"></i> History
+                                        </div>
+                                        <div class="tag-option" data-value="architecture">
+                                            <i class="fas fa-check"></i> Architecture
+                                        </div>
+                                        <div class="tag-option" data-value="hiking">
+                                            <i class="fas fa-check"></i> Hiking
+                                        </div>
+                                        <div class="tag-option" data-value="wildlife">
+                                            <i class="fas fa-check"></i> Wildlife
+                                        </div>
+                                        <div class="tag-option" data-value="national parks">
+                                            <i class="fas fa-check"></i> National parks
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="interests-hidden">
+                                <small class="form-hint">You can choose up to 2 interests (default is General)</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="budget">Budget</label>
+                            <select id="budget">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Transportation</label>
+                            <div class="transport-options">
+                                <label><input type="radio" name="transport" value="walking" checked><span>Walking</span></label>
+                                <label><input type="radio" name="transport" value="public"><span>Public</span></label>
+                                <label><input type="radio" name="transport" value="driving"><span>Driving</span></label>
+                                <label><input type="radio" name="transport" value="cycling"><span>Cycling</span></label>
+                            </div>
+                        </div>
+                        <button type="submit" id="generate-plan">Generate Plan</button>
+                    </form>
+                </section>
+
+                <section class="itinerary-container" id="itinerary-container">
+                    <div class="itinerary-header">
+                        <h2>Your travel itinerary</h2>
+                        <button id="explore-panel-btn" class="explore-btn">
+                            <i class="fas fa-search-location"></i> Explore nearby
+                        </button>
+                    </div>
+                    <div class="days-navigation" id="days-navigation">
+                        <!-- the days navigation will be dynamically generated in JavaScript -->
+                    </div>
+                    <div class="itinerary-details" id="itinerary-details">
+                        <!-- the itinerary details will be dynamically generated in JavaScript -->
+                    </div>
+                </section>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-controls">
+                    <button id="center-map" title="Center map"><i class="fas fa-crosshairs"></i></button>
+                    <button id="toggle-traffic" title="Show traffic"><i class="fas fa-car"></i></button>
+                    <button id="explore-area" title="Explore area"><i class="fas fa-search-location"></i></button>
+                </div>
+                
+                <div class="poi-type-selector">
+                    <button class="poi-close-btn" id="poi-close-btn"><i class="fas fa-times"></i></button>
+                    <div class="poi-type-heading">Show POI:</div>
+                    <div class="poi-type-options">
+                        <label><input type="checkbox" class="poi-type-checkbox" value="food"> <i class="fas fa-utensils"></i> Food</label>
+                        <label><input type="checkbox" class="poi-type-checkbox" value="accommodation"> <i class="fas fa-bed"></i> Accommodation</label>
+                        <label><input type="checkbox" class="poi-type-checkbox" value="transport"> <i class="fas fa-bus"></i> Transport</label>
+                        <label><input type="checkbox" class="poi-type-checkbox" value="market"> <i class="fas fa-shopping-bag"></i> Shopping</label>
+                    </div>
+                    <div class="walking-time-selector">
+                        <div class="walking-time-heading">Walking time:</div>
+                        <div class="walking-time-options">
+                            <label><span class="time-badge ten-min">10 min</span><span class="walking-distance">(~800m)</span></label>
+                            <label><span class="time-badge fifteen-min active">15 min</span><span class="walking-distance">(~1200m)</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="place-details" id="place-details">
+                <button class="close-details" id="close-details"><i class="fas fa-times"></i></button>
+                <div class="place-info">
+                    <!-- the place details will be dynamically filled in JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <footer>
+        </footer>
+    </div>
+    
+    <!-- load the external libraries -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAetWPGveDS7iELpTRQFO6b7_DWQ_0S8OI&libraries=places" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    
+    <!-- load the application scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/mockData2.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/itinerary.js"></script>
+    <script src="js/placeDetails.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

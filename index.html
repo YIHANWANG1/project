@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Explore London</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="style.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation Menu -->
+  <nav id="page-nav" class="collapsed">
+    <button id="nav-toggle" class="nav-toggle">
+      <span class="nav-svg"></span>
+    </button>
+    <div class="nav-content">
+      <ul>
+        <li><a href="#intro" class="nav-link active">Get Start</a></li>
+        <li><a href="#introduction" class="nav-link">Introduction</a></li>
+        <li><a href="#overview" class="nav-link">Overview</a></li>
+        <li><a href="#interactive-map" class="nav-link">Interactive Map</a></li>
+        <li><a href="#borough-highlights" class="nav-link">Top 10 Sites</a></li>
+        <li><a href="#cultural-events" class="nav-link">Wandering</a></li>
+        <li><a href="#transportation" class="nav-link">Smart Guide</a></li>
+        <li><a href="#conclusion" class="nav-link">Conclusion</a></li>
+        <li><a href="#our-team" class="nav-link">Our Team</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Section 1: Introduction -->
+  <section id="intro" class="full-screen-section">
+    <video class="intro-bg-video" autoplay loop muted playsinline>
+      <source src="https://github.com/YIHANWANG1/0003/raw/main/copy_5513B331-FDC6-454C-9B01-A888B9744500.MOV" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="section-content">
+      <h1>
+        See. Plan. Go.<br>
+        <span class="intro-subtitle">— Your Smart Guide to London</span>
+      </h1>
+      <p>A data-driven travel companion for exploring London's sights, patterns, and possibilities.</p>
+    </div>
+  </section>
+
+  <!-- Section: Introduction (before Overview) -->
+  <section id="introduction" class="full-screen-section" style="padding:0;margin:0;">
+    <iframe 
+      src="london travel data/intro.html" 
+      style="width:100vw;height:100vh;min-height:600px;border:none;display:block;" 
+      frameborder="0" 
+      allowfullscreen>
+    </iframe>
+  </section>
+
+  <!-- Section 2: Overview -->
+  <section id="overview" class="full-screen-section">
+    <div class="section-content" style="width:100vw;max-width:none;padding:0;margin:0;">
+      <div class="overview-content" style="padding:0;margin:0;">
+        <iframe 
+          src="london travel data/map.html" 
+          style="width:calc(100vw - 20px);height:100vh;min-height:600px;border:none;display:block;margin-right:20px;" 
+          frameborder="0" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Interactive Map (Existing Content) -->
+  <section id="interactive-map" class="full-screen-section">
+    <div id="container">
+      <div id="map">
+        <div class="color-bar-container">
+          <div class="color-bar"></div>
+          <div class="color-bar-label-row">
+            <span class="color-bar-label">Low</span>
+            <span class="color-bar-label">High</span>
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        <div class="intro-block">
+          <div class="intro-title">London's Sites by Borough</div>
+          <div class="intro-desc">London is a city brimming with history, culture, and natural charm. Each borough has its own tourism profile — such as Big Ben in Westminster or cultural museums in Kensington and Chelsea — reflecting the city's rich and varied character.</div>
+        </div>
+        <div class="mode-switch">
+          <label><input type="radio" name="mode" value="choropleth" checked> Density Map</label>
+          <label><input type="radio" name="mode" value="points"> Points Map</label>
+        </div>
+        <div id="radar-chart" style="max-height: 90vh; overflow-y: auto;"></div>
+        <div class="layer-controls" id="point-layer-controls" style="display:none;">
+          <label><input type="checkbox" value="Attractions" checked> <span class="legend-color" style="background:#d73027;"></span> Attractions</label>
+          <label><input type="checkbox" value="Museums" checked> <span class="legend-color" style="background:#67001f;"></span> Museums</label>
+          <label><input type="checkbox" value="Galleries" checked> <span class="legend-color" style="background:#081d58;"></span> Galleries</label>
+          <label><input type="checkbox" value="Parks_&_Gardens" checked> <span class="legend-color" style="background:#41b6c4;"></span> Parks & Gardens</label>
+          <label><input type="checkbox" value="Historic_Sites" checked> <span class="legend-color" style="background:#225ea8;"></span> Historic Sites</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Borough Highlights -->
+  <section id="borough-highlights" class="full-screen-section">
+    <div class="section-content">
+      <div class="frame-container">
+        <iframe class="frame" id="intro-frame" src="Top 10 Plus/Top 10 Intro/Top10 Intro.html" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-top-navigation" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Cultural Events -->
+  <section id="cultural-events" class="full-screen-section">
+    <div class="section-content" style="width: 100%; height: 100%; padding: 0; margin: 0;">
+      <div class="frame-container" id="top10-container" style="width: 100%; height: 100vh; position: relative; margin: 0; padding: 0;">
+        <iframe class="frame" id="top10-frame" src="Top 10 Plus/Top 10/Top10.html" frameborder="0" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-top-navigation" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Transportation -->
+  <section id="transportation" class="full-screen-section" style="background:#e6f0fa;">
+    <div class="section-content" style="width:100vw;max-width:none;padding:0;margin:0;">
+      <div class="transportation-content" style="padding:0 20px; margin:0;">
+        <iframe src="travel planner/function.html" style="width:100%;height:90vh;min-height:700px;border:none;display:block;" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 9: Conclusion -->
+  <section id="conclusion" class="full-screen-section">
+    <div class="section-content">
+      <div class="conclusion-content">
+        <h2 style="text-align:center;margin-top:30px;margin-bottom:84px;font-size:2.5em;">Conclusion</h2>
+        <div style="width:80vw;max-width:1600px;position:relative;left:50%;transform:translateX(-50%);text-align:left;font-size:1.05em;color:rgba(80,80,80,0.85);line-height:1.7;margin-bottom:64px;padding:0 16px;">
+          This project aims to respond to the post-pandemic recovery of the UK tourism sector by developing an interactive travel planning platform for London, in light of increasing demand for urban mobility and cultural engagement. The platform includes a personalised route planner that generates customised itineraries based on spatial-temporal constraints and individual points of interest. It also visualises key tourism trends—such as visitor numbers, spending levels, and average stay durations—and provides spatial analysis of attraction density across the city. By integrating behavioural insight with geospatial data, the platform reflects the complex relationships between movement, space, and experience. Situated within the conceptual framework of "City Networks", these travel trajectories are interpreted as dynamic linkages between people, places, and digital infrastructures. While the current version presents a functional prototype, it operates on static input data and limited contextual responsiveness. Future refinement may involve the use of live data, adaptive routing logic, and feedback-driven design to more effectively mirror the evolving conditions of urban tourism.
+        </div>
+        <div class="spg-timeline">
+          <div class="spg-step">
+            <div style="color: rgba(215,48,39,0.7); font-weight: bold; font-size:2em; margin-bottom:18px;">SEE</div>
+            <div class="spg-desc">
+              <ul style="list-style:none;padding:0;margin:0;">
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Tourist statistics</li>
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Category distribution</li>
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Top 10 sites</li>
+              </ul>
+            </div>
+          </div>
+          <div class="spg-line"></div>
+          <div class="spg-step">
+            <div style="color: rgba(215,48,39,0.7); font-weight: bold; font-size:2em; margin-bottom:18px;">PLAN</div>
+            <div class="spg-desc">
+              <ul style="list-style:none;padding:0;margin:0;">
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Customise route</li>
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Navigation</li>
+                <li style="font-size:0.8em;color:rgba(102,102,102,0.8);">Explore surrounding services</li>
+              </ul>
+            </div>
+          </div>
+          <div class="spg-line"></div>
+          <div class="spg-step">
+            <div style="color: rgba(215,48,39,0.7); font-weight: bold; font-size:2em; margin-bottom:18px;">GO</div>
+            <div class="spg-desc" style="display:flex;flex-direction:column;align-items:center;">
+              <div style="display:flex;gap:18px;justify-content:center;align-items:flex-start;margin-top:8px;">
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                  <a href="#cultural-events" title="Wandering">
+                    <img src="https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/wandering.png" alt="Wandering" style="width:120px;height:70px;object-fit:contain;border-radius:10px;border:2px solid #eee;transition:border 0.2s;display:block;" onmouseover="this.style.border='2px solid #1a73e8'" onmouseout="this.style.border='2px solid #eee'" />
+                  </a>
+                  <div style="margin-top:6px;font-size:0.8em;color:rgba(102,102,102,0.8);">Wandering</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                  <a href="#transportation" title="Smart Guide">
+                    <img src="https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/smart%20guide.png" alt="Smart Guide" style="width:120px;height:70px;object-fit:contain;border-radius:10px;border:2px solid #eee;transition:border 0.2s;display:block;" onmouseover="this.style.border='2px solid #1a73e8'" onmouseout="this.style.border='2px solid #eee'" />
+                  </a>
+                  <div style="margin-top:6px;font-size:0.8em;color:rgba(102,102,102,0.8);">Smart Guide</div>
+                </div>
+              </div>
+              <div style="margin-top:8px;font-size:0.8em;color:rgba(136,136,136,0.8);text-align:center;">Click to visit!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 10: Our Team -->
+  <section id="our-team" class="full-screen-section">
+    <div class="section-content">
+      <h2 style="text-align:center;margin-top:30px;margin-bottom:84px;font-size:2.5em;color:#fff;text-shadow:2px 2px 8px rgba(0,0,0,0.8);">Our Team</h2>
+      <div class="team-content" style="display: flex; justify-content: center; gap: 80px;">
+        <!-- Member 1 -->
+        <div class="team-member" style="text-align: center;">
+          <div class="avatar-circle" style="margin: 0 auto;">
+            <img src="https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/photo/lyf.JPG" alt="lyf" style="width:180px;height:180px;object-fit:cover;object-position:center 20%;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+          </div>
+          <div style="font-size:1.6em;font-weight:bold;margin-top:24px;color:#fff;">Yufei Liu</div>
+          <div style="color:#fff;font-weight:bold;margin-top:8px;">Co-Producer</div>
+          <div style="color:#fff;margin-top:4px;">ucfnicm@ucl.ac.uk</div>
+        </div>
+        <!-- Member 2 -->
+        <div class="team-member" style="text-align: center;">
+          <div class="avatar-circle" style="margin: 0 auto;">
+            <img src="https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/photo/sc.jpg" alt="sc" style="width:180px;height:180px;object-fit:cover;object-position:center 20%;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+          </div>
+          <div style="font-size:1.6em;font-weight:bold;margin-top:24px;color:#fff;">Chao Sun</div>
+          <div style="color:#fff;font-weight:bold;margin-top:8px;">Co-Producer</div>
+          <div style="color:#fff;margin-top:4px;">chao.sun.23@ucl.ac.uk</div>
+        </div>
+        <!-- Member 3 -->
+        <div class="team-member" style="text-align: center;">
+          <div class="avatar-circle" style="margin: 0 auto;">
+            <img src="https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/photo/wyh.jpg" alt="wyh" style="width:180px;height:180px;object-fit:cover;object-position:center 20%;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+          </div>
+          <div style="font-size:1.6em;font-weight:bold;margin-top:24px;color:#fff;">Yihan Wang</div>
+          <div style="color:#fff;font-weight:bold;margin-top:8px;">Co-Producer</div>
+          <div style="color:#fff;margin-top:4px;">ucfnwac@ucl.ac.uk</div>
+        </div>
+      </div>
+    </div>
+    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.35); padding: 15px 0; text-align: center; color: rgba(255,255,255,0.9); font-size: 0.9em;">
+      Group 10: See. Plan. Go.— Your Smart Guide to London
+    </div>
+  </section>
+
+  <script src="main.js"></script>
+  <script>
+    // Wait for page to load completely
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get iframe element
+      const introFrame = document.getElementById('intro-frame');
+      
+      // Set up message listener after iframe loads
+      introFrame.onload = function() {
+        // Listen for messages from iframe
+        window.addEventListener('message', function(event) {
+          // Check if message is about Explore button click
+          if (event.data === 'exploreClicked') {
+            // Scroll to Top 10 page
+            document.getElementById('top10-container').scrollIntoView({ 
+              behavior: 'smooth' 
+            });
+          }
+        });
+        
+        // Send message to iframe, telling it we're ready to receive messages
+        introFrame.contentWindow.postMessage('ready', '*');
+      };
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction - London Tourism</title>
+    <link rel="stylesheet" href="./travel data.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <style>
+        body, .intro-text, .intro-text p, .intro-text h1 {
+            font-size: 15px !important;
+        }
+        .intro-text h1 {
+            font-size: 2.5rem !important;
+        }
+        .intro-text p {
+            font-size: 0.97rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <section id="intro" class="section">
+            <div class="intro-text-container">
+                <div class="intro-text">
+                    <h1>Introduction</h1>
+                    <p>London was the most visited European city in 2021, and tourism remains a key sector in the UK economy, contributing £237 billion to national GDP in 2022.</p>
+                    <p>Although the COVID-19 pandemic severely disrupted global tourism, recent data suggest a steady recovery. According to a 2023 BBC report, international arrivals to London are nearing pre-pandemic levels, driven by renewed demand for cultural and long-haul travel.</p>
+                    <p>In this context, the project introduces an interactive travel planning tool designed to support personalised exploration of London, combining spatial context with user-defined preferences to enable meaningful engagement with the city.</p>
+                </div>
+            </div>
+            
+            <div class="intro-chart-container">
+                <div class="intro-chart">
+                    <h2 style="display:none">International visitors trend (2019-2026 quarterly forecast)</h2>
+                    <div id="visitors-trend-chart"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure trend chart container has enough height
+            const chartContainer = document.getElementById('visitors-trend-chart');
+            if (chartContainer) {
+                if (chartContainer.offsetHeight < 200) {
+                    chartContainer.style.minHeight = '300px';
+                }
+            }
+            
+            // Load trend chart data
+            fetch('https://raw.githubusercontent.com/PhoebeLiuyf/mini-project/main/travel%20data/international_visitors_data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    createVisitorsTrendChart(data);
+                })
+                .catch(error => {
+                    const chartElement = document.getElementById('visitors-trend-chart');
+                    if (chartElement) {
+                        chartElement.innerHTML = `
+                            <div style="padding: 20px; text-align: center; color: #ff3b30;">
+                                <h3>Data loading failed</h3>
+                                <p>${error.message}</p>
+                            </div>
+                        `;
+                    }
+                });
+        });
+        
+        function createVisitorsTrendChart(data) {
+            const chartDom = document.getElementById('visitors-trend-chart');
+            if (!chartDom) return;
+            
+            const myChart = echarts.init(chartDom);
+            const periods = data.periods || [];
+            const visitorValues = data.visitors || [];
+            const spendingValues = data.spending || [];
+            
+            if (periods.length === 0 || visitorValues.length === 0 || spendingValues.length === 0) {
+                chartDom.innerHTML = '<div style="padding: 20px; text-align: center;">No available trend data</div>';
+                return;
+            }
+            
+            const maxVisitor = Math.max(...visitorValues);
+            const maxSpending = Math.max(...spendingValues);
+            const negativeSpendingValues = spendingValues.map(value => -value);
+            
+            const option = {
+                backgroundColor: '#ffffff',
+                textStyle: {
+                    fontFamily: '-apple-system, SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif',
+                    color: '#333333'
+                },
+                grid: {
+                    left: '10%',
+                    right: '5%',
+                    top: '5%',
+                    bottom: '15%',
+                    containLabel: true
+                },
+                graphic: [{
+                    type: 'text',
+                    z: 100,
+                    top: 400,
+                    right: 50,
+                    bottom: 10,
+                    style: {
+                        text: 'Visitor trend (2019-2026 quarterly forecast)',
+                        fontSize: 13,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        textVerticalAlign: 'bottom',
+                        fill: '#333'
+                    }
+                }],
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderColor: 'rgba(0, 0, 0, 0.05)',
+                    borderWidth: 1,
+                    textStyle: {
+                        fontSize: 12,
+                        color: '#333333'
+                    },
+                    axisPointer: {
+                        type: 'line',
+                        crossStyle: {
+                            color: '#999'
+                        },
+                        label: {
+                            show: false
+                        }
+                    },
+                    formatter: function(params) {
+                        let result = `${params[0].axisValue}<br/>`;
+                        params.forEach(param => {
+                            const marker = `<span style="display:inline-block;margin-right:4px;border-radius:50%;width:8px;height:8px;background-color:${param.color};"></span>`;
+                            let value;
+                            let unit;
+                            
+                            if (param.seriesName === 'Number of visitors') {
+                                value = param.value;
+                                unit = 'thousand';
+                                const index = param.dataIndex;
+                                if (index > 0) {
+                                    const prevValue = visitorValues[index - 1];
+                                    if (prevValue > 0) {
+                                        const changePercent = ((value - prevValue) / prevValue * 100).toFixed(1);
+                                        result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit} (${changePercent}%)<br/>`;
+                                    } else {
+                                        result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                                    }
+                                } else {
+                                    result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                                }
+                            } else {
+                                value = Math.abs(param.value);
+                                unit = 'million £';
+                                result += `${marker} ${param.seriesName}: ${value.toFixed(1)} ${unit}<br/>`;
+                            }
+                        });
+                        return result;
+                    },
+                    extraCssText: 'border-radius: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); z-index: 9999;'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: periods,
+                    axisLabel: {
+                        interval: 'auto',
+                        rotate: 45,
+                        fontSize: 10,
+                        color: '#333333'
+                    },
+                    axisLine: {
+                        show: true,
+                        onZero: true,
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.4)', width: 1 }
+                    },
+                    axisTick: { show: false }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        fontSize: 10,
+                        color: '#333333',
+                        formatter: function(value) {
+                            const absValue = Math.abs(value);
+                            if (absValue >= 1000) {
+                                return (absValue / 1000).toFixed(1) + 'k';
+                            }
+                            return absValue.toFixed(0);
+                        },
+                        margin: 0
+                    },
+                    offset: 0,
+                    position: 'left',
+                    splitLine: {
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.05)' }
+                    },
+                    axisLine: { 
+                        show: true, 
+                        lineStyle: { color: 'rgba(0, 0, 0, 0.4)', width: 1 }
+                    },
+                    axisTick: { show: false },
+                    max: maxVisitor * 1.1,
+                    min: -maxSpending * 1.1,
+                    splitNumber: 6
+                },
+                series: [
+                    {
+                        name: 'Number of visitors',
+                        type: 'line',
+                        data: visitorValues,
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 6,
+                        lineStyle: {
+                            width: 3,
+                            color: '#5470c6'
+                        },
+                        itemStyle: {
+                            color: '#5470c6',
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0, y: 0, x2: 0, y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(84, 112, 198, 0.7)' },
+                                    { offset: 1, color: 'rgba(84, 112, 198, 0.05)' }
+                                ]
+                            }
+                        },
+                        emphasis: {
+                            focus: 'series',
+                            itemStyle: {
+                                borderWidth: 3,
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(84, 112, 198, 0.5)',
+                                borderColor: '#fff'
+                            },
+                            scale: true,
+                            symbolSize: 12
+                        },
+                        label: {
+                            show: false
+                        },
+                        markLine: {
+                            silent: true,
+                            lineStyle: {
+                                color: '#999',
+                                type: 'dashed',
+                                width: 1,
+                                opacity: 0.3
+                            },
+                            data: [
+                                {
+                                    yAxis: 0,
+                                    label: { show: false }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'Spending amount',
+                        type: 'bar',
+                        data: negativeSpendingValues,
+                        barWidth: '60%',
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(
+                                0, 0, 0, 1,
+                                [
+                                    {offset: 0, color: '#bc4740'},
+                                    {offset: 1, color: '#d58681'}
+                                ]
+                            ),
+                            opacity: 0.85
+                        },
+                        emphasis: {
+                            focus: 'series',
+                            itemStyle: {
+                                opacity: 1
+                            }
+                        },
+                        label: {
+                            show: false
+                        },
+                        markPoint: {
+                            show: false
+                        },
+                        tooltip: {
+                            show: true
+                        }
+                    }
+                ],
+                animationDuration: 2000,
+                animationEasing: 'cubicOut'
+            };
+            
+            myChart.setOption(option);
+            
+            window.addEventListener('resize', function() {
+                if (myChart && myChart.resize) {
+                    myChart.resize();
+                }
+            });
+        }
+    </script>
+</body>
+</html> 
